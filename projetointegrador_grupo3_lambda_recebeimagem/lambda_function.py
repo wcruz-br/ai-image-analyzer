@@ -5,6 +5,23 @@ import time
 import socket
 import botocore.exceptions
 
+s3 = boto3.client('s3')
+rekognition = boto3.client('rekognition')
+
+def resposta(statusCode, body):
+    return {
+        'statusCode': statusCode,
+        'body': body,
+        "responseParameters": {
+            "method.response.header.Access-Control-Allow-Origin": '*'  # Allow requests from any origin
+        },
+        'headers': {
+            'Access-Control-Allow-Origin': '*'  # Allow requests from any origin
+        },
+        "Access-Control-Allow-Origin": '*',  # Allow requests from any origin
+        "origin": "*"
+}
+
 def lambda_handler(event, context):
     """
     Lambda function to handle image upload from HTML form.
@@ -17,54 +34,44 @@ def lambda_handler(event, context):
         dict: API Gateway response object.
     """
 
-    # text = ""
-    # for s in event.keys():
-    #     text += s + '\n'
-    # return {
-    #     'statusCode': 200,
-    #     'body': event["body"]
-    # }
+    # print(event)
+    # print(context)
 
     try:
-        # encontra o 'body' no json contido em event e coloca em uma variável chamada image_data
+        # Extract image data from the JSON body
         try:
             image_data = event['body']
+            content_type = event["headers"]["content-type"]
         except Exception as e:
-            return {
-                'statusCode': 500,
-                'body': json.dumps({'error': 'Acesso invalido - ' + str(e)})
-            }            
+            return resposta( 500, json.dumps({'error': str(e)}) )
 
         # Check if image data exists
         if not image_data:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({'error': 'No image data provided.'})
-            }
+            return resposta( 400, json.dumps({'error': 'No image data provided.'}) )
 
-        # Decode the base64 encoded image data
+        # Convert image_data, que contém a imagem enviada pelo formulário html e codificada como "multipart/form-data", em dados binários
         image_binary = base64.b64decode(image_data)
 
-        # Grava a imagem no bucket S3, usando como nome o timestampunix + o ip de origem sem os pontos
-        # Exemplo: 1678801234_192168110
-        s3 = boto3.client('s3')
+        # Save the image to the S3 bucket
         timestamp = int(time.time())
         ip = socket.gethostbyname(socket.gethostname()).replace('.', '')
-        # filename = f"{timestamp}_{ip}.jpg"
-        # s3.put_object(Bucket='projetointegrador-grupo3-bucket', Key=filename, Body=image_binary)
-        filename_debug = f"{timestamp}_{ip}.txt"
-        s3.put_object(Bucket='projetointegrador-grupo3-bucket', Key=filename_debug, Body="teste")
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'message': 'Imagem recebida com sucesso.'})
-        }
-    except botocore.exceptions as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'ClientError': str(e)})
-        }
+        filename = f"{timestamp}_{ip}.jpg"
+        s3.put_object(Bucket='projetointegrador-grupo3-bucket', Key=filename, Body=image_binary)
+
+        # chama o rekognition para analisar a imagem que foi colocada no bucket
+        response = rekognition.detect_labels(Image={'Bytes': image_binary})
+        print(response)
+
+    except botocore.exceptions.ClientError as e:
+        # Handle ClientError (e.g., invalid bucket names, permissions issues)
+        return resposta(500, json.dumps({'ClientError': str(e)}))
+
+    except botocore.exceptions.ParamValidationError as e:
+        # Handle parameter validation errors
+        return resposta(400, json.dumps({'ParamValidationError': str(e)}))
+
     except Exception as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'Exception': str(e)})
-        }
+        # Handle any other unexpected exceptions
+        return resposta(500, json.dumps({'Exception': str(e)}))
+
+    return resposta( 200, json.dumps({'message': 'Image received successfully.'}) )

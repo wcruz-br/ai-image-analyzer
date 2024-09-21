@@ -62,7 +62,8 @@
         <p>Selecione uma imagem para análise da Inteligência Artificial
         <br>
         <span style="font-size: 0.8em">(o arquivo deve estar nos formatos jpg ou png)</span></p>
-        <form action="https://4ms7cbivl6xt2n76tugbfwumn40mpuhn.lambda-url.us-east-1.on.aws/" method="post" enctype="multipart/form-data">
+        <!-- form id="image-form" -->
+        <form id="image-form" action="https://4ms7cbivl6xt2n76tugbfwumn40mpuhn.lambda-url.us-east-1.on.aws/" method="post" enctype="multipart/form-data">
             <label for="image" class="button">
                 Escolher Imagem
             </label>
@@ -73,23 +74,84 @@
             <input type="submit" value="Enviar" class="button">
             </div>
         </form>
+        <div id="response-container"></div> 
     </div>
 
     <script>
         const inputImage = document.getElementById('image');
         const previewImage = document.getElementById('image-preview');
-        const previewContainer = document.querySelector('.preview'); 
+        const previewContainer = document.querySelector('.preview');
+        inputImage.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = 'block'; 
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
+
+    <!-- script>
+        const inputImage = document.getElementById('image');
+        const previewImage = document.getElementById('image-preview');
+        const previewContainer = document.querySelector('.preview');
+        const imageForm = document.getElementById('image-form');
+        const responseContainer = document.getElementById('response-container');
 
         inputImage.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
-                    previewContainer.style.display = 'block'; // Exibe a pré-visualização
+                    previewContainer.style.display = 'block'; 
                 }
                 reader.readAsDataURL(this.files[0]);
             }
         });
-    </script>
+
+        imageForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const fileInput = document.getElementById('image');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const arrayBuffer = e.target.result;
+                    const fileData = new Uint8Array(arrayBuffer); 
+
+                    // Chamada à API Lambda
+                    fetch('https://4ms7cbivl6xt2n76tugbfwumn40mpuhn.lambda-url.us-east-1.on.aws/', { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ image: Array.from(fileData) }) // Converte Uint8Array para array
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro na requisição: ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        responseContainer.innerHTML = '<p>Resposta da API: ' + JSON.stringify(data) + '</p>';
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        responseContainer.innerHTML = '<p>Erro ao chamar a API: ' + error.message + '</p>';
+                    });
+                };
+
+                reader.readAsArrayBuffer(file);
+            } else {
+                responseContainer.innerHTML = '<p>Por favor, selecione um arquivo.</p>';
+            }
+        });
+    </script -->
 </body>
 </html>

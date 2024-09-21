@@ -1,3 +1,4 @@
-/.editorconfig
-/.pytest_cache
-/.venv
+.editorconfig
+.pytest_cache
+.venv
+__pycache__
