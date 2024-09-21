@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Imagem</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0 10px 0
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+
+        .preview {
+            margin-top: 20px;
+            text-align: center;
+            display: none; /* Inicialmente oculta a pré-visualização */
+        }
+
+        .preview img {
+            max-width: 100%;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Projeto Integrador - Grupo 3</h2>
+        <p>Selecione uma imagem para análise da Inteligência Artificial
+        <br>
+        <span style="font-size: 0.8em">(o arquivo deve estar nos formatos jpg ou png)</span></p>
+        <form action="https://4ms7cbivl6xt2n76tugbfwumn40mpuhn.lambda-url.us-east-1.on.aws/" method="post" enctype="multipart/form-data">
+            <label for="image" class="button">
+                Escolher Imagem
+            </label>
+            <input type="file" id="image" name="image" accept=".jpg, .jpeg, .png">
+            <div class="preview">
+                <img id="image-preview" src="#" alt="Preview da Imagem">
+            </br>
+            <input type="submit" value="Enviar" class="button">
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const inputImage = document.getElementById('image');
+        const previewImage = document.getElementById('image-preview');
+        const previewContainer = document.querySelector('.preview'); 
+
+        inputImage.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = 'block'; // Exibe a pré-visualização
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
+</body>
+</html>
