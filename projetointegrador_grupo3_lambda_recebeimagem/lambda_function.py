@@ -5,32 +5,38 @@ import time
 import socket
 import botocore.exceptions
 import cgi
+import datetime
 from io import BytesIO 
 
 s3 = boto3.client('s3')
+s3_bucket_name = "projetointegrador-grupo3-bucket"
 rekognition = boto3.client('rekognition')
-# dynamodb = boto3.client('dynamodb')
+dynamodb = boto3.client('dynamodb')
+dynamodb_table = "projetointegrador-grupo3-imagens-enviadas"
 
 def resposta(statusCode, body):
     return {
         'statusCode': statusCode,
         'body': body,
-        "responseParameters": {
-            "method.response.header.Access-Control-Allow-Origin": '*'  # Allow requests from any origin
-        },
         'headers': {
             'Access-Control-Allow-Origin': '*',  # Allow requests from any origin
             'Content-Type': 'text/html'  # Allow requests from any origin
-        },
-        "Access-Control-Allow-Origin": '*',  # Allow requests from any origin
-        "origin": "*"
+        }
     }
 
-def grava_objeto_no_bucket_s3(image_binary):
-    timestamp = int(time.time())
-    ip = socket.gethostbyname(socket.gethostname()).replace('.', '')
-    filename = f"{timestamp}_{ip}.jpg"
-    s3.put_object(Bucket='projetointegrador-grupo3-bucket', Key=filename, Body=image_binary)
+def grava_objeto_no_bucket_s3(filename, image_binary):
+    s3.put_object(Bucket=s3_bucket_name, Key=filename, Body=image_binary)
+
+def grava_no_dynamodb(filename, labels, ip, datetime_str):
+    labels_dict = {label['Name']: {'N': str(label['Confidence'])} for label in labels}
+    response = dynamodb.put_item(
+        TableName=dynamodb_table,
+        Item={"filename": {'S': filename},
+              "rotulos": {'M': labels_dict},
+              "IP": {'S': ip},
+              "datetime": {'S': datetime_str},
+              })
+    print(response)
 
 def pagina_de_resposta(labels, html_imagem_com_boxes):
     html = f"""
@@ -260,12 +266,21 @@ def lambda_handler(event, context):
     image_file = form['image']
     image_binary = image_file.file.read()
 
-    # Save the image to the S3 bucket
-    grava_objeto_no_bucket_s3(image_binary)
+    # define detalhes do objeto
+    timestamp = int(time.time())
+    ip = socket.gethostbyname(socket.gethostname()).replace('.', '')
+    filename = f"{timestamp}_{ip}.jpg"
+    datetime_str = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
-    # chama o rekognition para analisar a imagem que foi colocada no bucket
+    # Grava a imagem no bucket S3
+    grava_objeto_no_bucket_s3(filename, image_binary)
+
+    # Chama o rekognition para analisar a imagem que foi colocada no bucket
     response = rekognition.detect_labels(Image={'Bytes': image_binary})
     labels = response['Labels']
+
+    # Grava informações no DynamoDB
+    grava_no_dynamodb(filename, labels, ip, datetime_str)
 
     # Gera HTML com a imagem e os boxes
     imagem_base64 = base64.b64encode(image_binary).decode('utf-8')
