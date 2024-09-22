@@ -20,23 +20,25 @@ def resposta(statusCode, body):
         'statusCode': statusCode,
         'body': body,
         'headers': {
-            'Access-Control-Allow-Origin': '*',  # Allow requests from any origin
-            'Content-Type': 'text/html'  # Allow requests from any origin
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'text/html'
         }
     }
 
 def grava_objeto_no_bucket_s3(filename, image_binary):
-    s3.put_object(Bucket=s3_bucket_name, Key=filename, Body=image_binary)
+    response = s3.put_object(Bucket=s3_bucket_name, Key=filename, Body=image_binary)
+    print("Resposta S3:", response)
 
 def grava_no_dynamodb(filename, labels, ip, datetime_str):
     labels_dict = {label['Name']: {'N': str(label['Confidence'])} for label in labels}
-    dynamodb.put_item(
+    response = dynamodb.put_item(
         TableName=dynamodb_table,
         Item={"filename": {'S': filename},
               "rotulos": {'M': labels_dict},
               "IP": {'S': ip},
               "datetime": {'S': datetime_str},
               })
+    print("Resposta DynamoDB:", response)
 
 def pagina_de_resposta(labels, html_imagem_com_boxes):
     html = f"""
@@ -157,7 +159,7 @@ def gerar_html_imagem_com_boxes(imagem_base64, labels):
                         width: {width}%; 
                         height: {height}%; 
                         border: 2px solid white;
-                        background-color: rgba(255, 255, 255, 0.3); /* Translucent white */
+                        background-color: rgba(255, 255, 255, 0.1); /* Translucent white */
                     " 
                         id="box-{label['Name']}-{i}"  # Keep the ID for the label
                         data-row-id="row-{label['Name']}"  # Add data-row-id attribute
@@ -237,8 +239,8 @@ def lambda_handler(event, context):
     Lambda function to handle image upload from HTML form.
 
     Args:
-        event (dict): API Gateway event containing form data.
-        context (object): Lambda context object.
+        event (dict): form data
+        context (object): Lambda context object
 
     Returns:
         string: HTML de resposta
@@ -247,59 +249,60 @@ def lambda_handler(event, context):
     # print(event)
     # print(context)
 
-#    try:
+    try:
 
-    # Decode the base64-encoded body
-    body_decoded = base64.b64decode(event['body'])
+        # Decode the base64-encoded body
+        body_decoded = base64.b64decode(event['body'])
+    
+        # Create a BytesIO object from the decoded body
+        body_stream = BytesIO(body_decoded)
+    
+        # Parse multipart/form-data using the BytesIO object
+        form = cgi.FieldStorage(
+            fp=body_stream,
+            headers=event['headers'],
+            environ={'REQUEST_METHOD': 'POST'}
+        )
+    
+        # Get the uploaded file
+        image_file = form['image']
+        image_binary = image_file.file.read()
+    
+        # define detalhes do objeto
+        timestamp = int(time.time())
+        ip = socket.gethostbyname(socket.gethostname()).replace('.', '')
+        filename = f"{timestamp}_{ip}.jpg"
+        datetime_str = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    
+        # Grava a imagem no bucket S3
+        grava_objeto_no_bucket_s3(filename, image_binary)
+    
+        # Chama o rekognition para analisar a imagem que foi colocada no bucket
+        response = rekognition.detect_labels(Image={'Bytes': image_binary})
+        print("Resposta Rekognition:", response)
+        labels = response['Labels']
+    
+        # Grava informações no DynamoDB
+        grava_no_dynamodb(filename, labels, ip, datetime_str)
+    
+        # Gera HTML com a imagem e os boxes
+        imagem_base64 = base64.b64encode(image_binary).decode('utf-8')
+        html_imagem_com_boxes = gerar_html_imagem_com_boxes(imagem_base64, labels)
+    
+        # Cria página de resposta
+        html = pagina_de_resposta(labels, html_imagem_com_boxes)
+    
+        return resposta(200, html)
 
-    # Create a BytesIO object from the decoded body
-    body_stream = BytesIO(body_decoded)
+    except botocore.exceptions.ClientError as e:
+        # Handle ClientError (e.g., invalid bucket names, permissions issues)
+        return resposta(500, f'ClientError: {str(e)}')
 
-    # Parse multipart/form-data using the BytesIO object
-    form = cgi.FieldStorage(
-        fp=body_stream,
-        headers=event['headers'],
-        environ={'REQUEST_METHOD': 'POST'}
-    )
+    except botocore.exceptions.ParamValidationError as e:
+        # Handle parameter validation errors
+        return resposta(400, f'ParamValidationError: {str(e)}')
 
-    # Get the uploaded file
-    image_file = form['image']
-    image_binary = image_file.file.read()
-
-    # define detalhes do objeto
-    timestamp = int(time.time())
-    ip = socket.gethostbyname(socket.gethostname()).replace('.', '')
-    filename = f"{timestamp}_{ip}.jpg"
-    datetime_str = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-
-    # Grava a imagem no bucket S3
-    grava_objeto_no_bucket_s3(filename, image_binary)
-
-    # Chama o rekognition para analisar a imagem que foi colocada no bucket
-    response = rekognition.detect_labels(Image={'Bytes': image_binary})
-    labels = response['Labels']
-
-    # Grava informações no DynamoDB
-    grava_no_dynamodb(filename, labels, ip, datetime_str)
-
-    # Gera HTML com a imagem e os boxes
-    imagem_base64 = base64.b64encode(image_binary).decode('utf-8')
-    html_imagem_com_boxes = gerar_html_imagem_com_boxes(imagem_base64, labels)
-
-    # Cria página de resposta
-    html = pagina_de_resposta(labels, html_imagem_com_boxes)
-
-    return resposta(200, html)
-
-    # except botocore.exceptions.ClientError as e:
-    #     # Handle ClientError (e.g., invalid bucket names, permissions issues)
-    #     return resposta(500, json.dumps({'ClientError': str(e)}))
-
-    # except botocore.exceptions.ParamValidationError as e:
-    #     # Handle parameter validation errors
-    #     return resposta(400, json.dumps({'ParamValidationError': str(e)}))
-
-    # except Exception as e:
-    #     # Handle any other unexpected exceptions
-    #     return resposta(500, json.dumps({'Exception': str(e)}))
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        return resposta(500, f'Exception: {str(e)}')
 
