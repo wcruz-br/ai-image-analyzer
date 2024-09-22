@@ -29,14 +29,13 @@ def grava_objeto_no_bucket_s3(filename, image_binary):
 
 def grava_no_dynamodb(filename, labels, ip, datetime_str):
     labels_dict = {label['Name']: {'N': str(label['Confidence'])} for label in labels}
-    response = dynamodb.put_item(
+    dynamodb.put_item(
         TableName=dynamodb_table,
         Item={"filename": {'S': filename},
               "rotulos": {'M': labels_dict},
               "IP": {'S': ip},
               "datetime": {'S': datetime_str},
               })
-    print(response)
 
 def pagina_de_resposta(labels, html_imagem_com_boxes):
     html = f"""
