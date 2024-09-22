@@ -9,10 +9,11 @@ import datetime
 from io import BytesIO 
 
 s3 = boto3.client('s3')
-s3_bucket_name = "projetointegrador-grupo3-bucket"
 rekognition = boto3.client('rekognition')
 dynamodb = boto3.client('dynamodb')
+
 dynamodb_table = "projetointegrador-grupo3-imagens-enviadas"
+s3_bucket_name = "projetointegrador-grupo3-bucket"
 
 def resposta(statusCode, body):
     return {
