@@ -81,8 +81,19 @@
         const inputImage = document.getElementById('image');
         const previewImage = document.getElementById('image-preview');
         const previewContainer = document.querySelector('.preview');
+
         inputImage.addEventListener('change', function() {
             if (this.files && this.files[0]) {
+
+                // Check file size (2MB limit)
+                const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
+                if (this.files[0].size > maxSizeInBytes) {
+                    alert("A imagem excede o limite de tamanho de 2MB. Por favor, selecione uma imagem menor.");
+                    this.value = ''; // Clear the input
+                    previewContainer.style.display = 'none'; // Hide preview
+                    return; // Stop further processing
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
@@ -93,65 +104,5 @@
         });
     </script>
 
-    <!-- script>
-        const inputImage = document.getElementById('image');
-        const previewImage = document.getElementById('image-preview');
-        const previewContainer = document.querySelector('.preview');
-        const imageForm = document.getElementById('image-form');
-        const responseContainer = document.getElementById('response-container');
-
-        inputImage.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewContainer.style.display = 'block'; 
-                }
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-
-        imageForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
-
-            const fileInput = document.getElementById('image');
-            const file = fileInput.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    const arrayBuffer = e.target.result;
-                    const fileData = new Uint8Array(arrayBuffer); 
-
-                    // Chamada à API Lambda
-                    fetch('https://4ms7cbivl6xt2n76tugbfwumn40mpuhn.lambda-url.us-east-1.on.aws/', { 
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ image: Array.from(fileData) }) // Converte Uint8Array para array
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Erro na requisição: ' + response.status);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        responseContainer.innerHTML = '<p>Resposta da API: ' + JSON.stringify(data) + '</p>';
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        responseContainer.innerHTML = '<p>Erro ao chamar a API: ' + error.message + '</p>';
-                    });
-                };
-
-                reader.readAsArrayBuffer(file);
-            } else {
-                responseContainer.innerHTML = '<p>Por favor, selecione um arquivo.</p>';
-            }
-        });
-    </script -->
 </body>
 </html>

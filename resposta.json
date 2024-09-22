@@ -1,0 +1,149 @@
+{'Labels': [
+        {'Name': 'Architecture', 'Confidence': 100.0, 'Instances': [], 'Parents': [], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Building', 'Confidence': 100.0, 'Instances': [
+                {'BoundingBox': {'Width': 0.9502657055854797, 'Height': 0.8990358114242554, 'Left': 0.0031606294214725494, 'Top': 0.09521575272083282
+                    }, 'Confidence': 91.93277740478516
+                }
+            ], 'Parents': [
+                {'Name': 'Architecture'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Office Building', 'Confidence': 100.0, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'City', 'Confidence': 99.99298095703125, 'Instances': [], 'Parents': [], 'Aliases': [
+                {'Name': 'Town'
+                }
+            ], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Urban', 'Confidence': 99.75811004638672, 'Instances': [], 'Parents': [], 'Aliases': [], 'Categories': [
+                {'Name': 'Colors and Visual Composition'
+                }
+            ]
+        },
+        {'Name': 'High Rise', 'Confidence': 95.59246826171875, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                },
+                {'Name': 'City'
+                },
+                {'Name': 'Urban'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Planetarium', 'Confidence': 77.51828002929688, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Convention Center', 'Confidence': 57.619083404541016, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Hotel', 'Confidence': 56.857818603515625, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Skyscraper', 'Confidence': 56.37078094482422, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                },
+                {'Name': 'City'
+                },
+                {'Name': 'High Rise'
+                },
+                {'Name': 'Urban'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Condo', 'Confidence': 56.124393463134766, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                },
+                {'Name': 'Housing'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Housing', 'Confidence': 56.124393463134766, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Arch', 'Confidence': 55.847023010253906, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                }
+            ], 'Aliases': [
+                {'Name': 'Arched'
+                }
+            ], 'Categories': [
+                {'Name': 'Buildings and Architecture'
+                }
+            ]
+        },
+        {'Name': 'Hospital', 'Confidence': 55.75113296508789, 'Instances': [], 'Parents': [
+                {'Name': 'Architecture'
+                },
+                {'Name': 'Building'
+                }
+            ], 'Aliases': [], 'Categories': [
+                {'Name': 'Medical'
+                }
+            ]
+        }
+    ], 'LabelModelVersion': '3.0', 'ResponseMetadata': {'RequestId': 'fc8404a3-6e32-4bbe-a102-7ba861e2824c', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'fc8404a3-6e32-4bbe-a102-7ba861e2824c', 'content-type': 'application/x-amz-json-1.1', 'content-length': '2758', 'date': 'Sat,
+            21 Sep 2024 22: 38: 35 GMT'
+        }, 'RetryAttempts': 0
+    }
+}
