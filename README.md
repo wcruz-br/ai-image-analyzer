@@ -209,7 +209,7 @@ When we create a Lambda function, AWS creates a default role for it with also a 
 
 ### Now run it!
 
-To use it, just call in a browser that bucket http endpoint you copied at [Preparing S3 bucket](#preparing-s3-bucket) last step. Hooray!
+To use it, just call in a browser that *bucket http endpoint* you copied at [Preparing S3 bucket](#preparing-s3-bucket) last step. Hooray!
 
 ## Notes
 
@@ -233,7 +233,7 @@ To use it, just call in a browser that bucket http endpoint you copied at [Prepa
 ## Acknowledgements
 
 -   [Proz Educação](https://prozeducacao.com.br/)
--   [@AWS](https://github.com/aws)
+-   [AWS](https://github.com/aws)
 -   [Tomas Alric](https://github.com/tomasalric)
 
 ## Authors
