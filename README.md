@@ -31,29 +31,37 @@ It uses **AWS** services and infrastructure, but works serverless - i.e. we don'
 ## Screenshots
 
 Submission Form
+
 ![Submission Form](docs/form.png)
 
 Response page
+
 ![Response page](docs/response.png)
 
 Images stored in bucket
+
 ![Images stored in bucket](docs/s3bucket.png)
 
 Data stored in DynamoDB
+
 ![Data stored in DynamoDB](docs/dynamodb.png)
 
 ## AWS Services used
 
 **AWS Lambda**
+
 Receives data from the user, processes it and shows response
 
 **Amazon Rekognition**
+
 Process the image to describe what is on it
 
 **Amazon S3**
+
 Contains the home page with the submission form, stores the received image
 
 **Amazon DynamoDB**
+
 Stores the results from image analysis
 
 ## Architecture
@@ -80,11 +88,14 @@ Stores the results from image analysis
 ### Preparing Lambda
 
 1. Let's start creating the Lambda function. Configure it to run as a Python code and allow external calls (as we are not using API Gateway in this example)
+
    ![Lambda runtime settings](docs/lambda_runtime.png)
    ![Lambda advanced settings](docs/lambda_adv_settings.png)
 2. After creating the Lambda function, edit it to paste our [python code](lambda_receiveimage/lambda_function.py) there, then click _Deploy_
+
    ![Lambda code](docs/lambda_edit_code.png)
 3. At that same page, copy the Lambda endpoint URL and put it in the _form action_ parameter, inside our [index.html](docs/index.html)
+
    ![Lambda entrypoint](docs/lambda_url.png)
 
 ```html
@@ -99,16 +110,20 @@ Stores the results from image analysis
 ### Preparing S3 bucket
 
 1. Create your S3 bucket. Make sure to uncheck the _Block Public Access_ settings:
+   
    ![Public Access settings](docs/s3bucket_public_access.png)
 2. Upload `index.html` file to bucket
 3. Go to bucket properties and enable _static website hosting_, setting our `index.html` file as the _Index document_
+
    ![static website hosting](docs/s3bucket_website_hosting.png)
 4. Now take note of the _website endpoint_ of this bucket. This will be our entry-point, the public URL users must access to send an image to be analyzed (it is located at the end of bucket's _Properties_ tab):
+
    ![s3 endpoint url](docs/s3bucket_url.png)
 
 ### Preparing DynamoDB
 
 Create a DynamoDB table. For this example, we use "filename" as Partition key.
+
 ![Creating DynamoDB table](docs/dynamodb_create.png)
 
 ### Setting Permissions
@@ -118,12 +133,16 @@ Now that we created all resources (and we don't need to do it for Amazon Rekogni
 When we create a Lambda function, AWS creates a default role for it with also a default policy, with permissions to write logs at CloudWatch. What we need to do is add the permissions needed to use the other resources there.
 
 1. Go to _IAM > Roles_ and find your Lambda role there. Search for the name you gave to it at creation time. Click on it.
+
    ![IAM Roles](docs/iam_roles.png)
 2. In the next screen, copy this role ARN. You will need it later.
+
    ![Role ARN](docs/iam_role_arn.png)
 3. You will see a _policy_ for this role. Click on it.
+
    ![Finding the Lambda Policy](docs/iam_lambda_policy.png)
 4. Now click on Edit button to edit the policy code
+
    ![Policy Edit](docs/iam_lambda_policy_edit1.png)
 5. Taking into account the [principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege), give permissions just to what this code really needs to use. You can try to do it by the console interface, or can just skip that insert the rules by hand. Anyway, if you do it right your final code must be something like this:
 
@@ -214,12 +233,15 @@ To use it, just call in a browser that bucket http endpoint you copied at [Prepa
 ## Acknowledgements
 
 -   [Proz Educação](https://prozeducacao.com.br/)
--   @AWS
--   @TomasAlric
+-   [@AWS](https://github.com/aws)
+-   [Tomas Alric](https://github.com/tomasalric)
 
 ## Authors
 
-[Willian Cruz](https://www.linkedin.com/in/wcruz/) (@wcruz-br) e [Caio Nunes](http://www.linkedin.com/in/caionscloud) (@CaioNS90)
+- Willian Cruz
+    [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/wcruz) [![GitHub](https://img.shields.io/badge/GitHub-%23000000.svg?logo=github&logoColor=white)](https://github.com/wcruz-br)
+- Caio Nunes Santos
+    [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](http://www.linkedin.com/in/caionscloud) [![GitHub](https://img.shields.io/badge/GitHub-%23000000.svg?logo=github&logoColor=white)](https://github.com/CaioNS90)
 
 ## License
 
