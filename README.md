@@ -239,8 +239,11 @@ To use it, just call in a browser that bucket http endpoint you copied at [Prepa
 ## Authors
 
 - Willian Cruz
+
     [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/wcruz) [![GitHub](https://img.shields.io/badge/GitHub-%23000000.svg?logo=github&logoColor=white)](https://github.com/wcruz-br)
+
 - Caio Nunes Santos
+
     [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](http://www.linkedin.com/in/caionscloud) [![GitHub](https://img.shields.io/badge/GitHub-%23000000.svg?logo=github&logoColor=white)](https://github.com/CaioNS90)
 
 ## License
