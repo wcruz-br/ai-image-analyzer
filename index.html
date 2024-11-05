@@ -58,13 +58,13 @@
 </head>
 <body>
     <div class="container">
-        <h2>Projeto Integrador - Grupo 3</h2>
-        <p>Selecione uma imagem para análise da Inteligência Artificial
+        <h2>AI Image Analyzer</h2>
+        <p>Select an image for Artificial Intelligence analysis:</p>
         <br>
-        <span style="font-size: 0.8em">(o arquivo deve estar nos formatos jpg ou png)</span></p>
+        <span style="font-size: 0.8em">(file must be in jpg or png format)</span></p>
         <form id="image-form" action="https://4ms7cbivl6xt2n76tugbfwumn40mpuhn.lambda-url.us-east-1.on.aws/" method="post" enctype="multipart/form-data">
             <label for="image" class="button">
-                Escolher Imagem
+                Choose image
             </label>
             <input type="file" id="image" name="image" accept=".jpg, .jpeg, .png">
             <div class="preview">
@@ -87,7 +87,7 @@
                 // Check file size (2MB limit)
                 const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
                 if (this.files[0].size > maxSizeInBytes) {
-                    alert("A imagem excede o limite de tamanho de 2MB. Por favor, selecione uma imagem menor.");
+                    alert("Image exceeds 2 MB limit. Please select another file.");
                     this.value = ''; // Clear the input
                     previewContainer.style.display = 'none'; // Hide preview
                     return; // Stop further processing
