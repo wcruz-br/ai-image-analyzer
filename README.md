@@ -4,6 +4,7 @@ This project aims to consolidate the knowledge acquired during the "AWS Cloud So
 
 - [Serverless AI Image Analyzer](#serverless-ai-image-analyzer)
   - [Objective](#objective)
+  - [Presentation](#presentation)
   - [Screenshots](#screenshots)
   - [AWS Services used](#aws-services-used)
   - [Architecture](#architecture)
@@ -27,6 +28,12 @@ This is a **serverless** application receives an image from internet users throu
 Response page has mouseover interaction to show identified label boxes. The image is saved as an object in a S3 bucket and the result is written to a DynamoDB table, for future use.
 
 It uses **AWS** services and infrastructure, but works serverless - i.e. we don't need a VM running to do the magic, what results in very low cost.
+
+## Presentation
+
+This video shows the application in action. Turn on the english subtitles.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pEYolpI2dus?si=wxpl6vc-HurmPnLk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Screenshots
 
@@ -66,7 +73,7 @@ Stores the results from image analysis
 
 ## Architecture
 
-![Architecture](docs/diagrama.png)
+![Architecture](docs/diagrama.jpg)
 
 ## Workflow
 
