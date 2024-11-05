@@ -31,9 +31,7 @@ It uses **AWS** services and infrastructure, but works serverless - i.e. we don'
 
 ## Presentation
 
-This video shows the application in action. Turn on the english subtitles.
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/pEYolpI2dus?si=wxpl6vc-HurmPnLk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[Watch this video](https://www.youtube.com/watch?v=pEYolpI2dus) to see the application in action. You can turn on English subtitles.
 
 ## Screenshots
 
